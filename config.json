@@ -6,7 +6,7 @@
     "uniqu_events_mapping": {
         "event_1_arm_1" : "ses-t0"
     },
-    "instrument_mapping": {
+    "instruments": {
         "anxiety_sensitivity_index_asi3" : {
             "label": "asi3",
             "items" : [
