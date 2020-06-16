@@ -1,0 +1,23 @@
+{
+    "bids_root": "/media/cephfs/labs/NPC/COBRE/studies/core",
+    "subjects": [
+        "AJ027"
+    ],
+    "uniqu_events_mapping": {
+        "event_1_arm_1" : "ses-t0"
+    },
+    "instrument_mapping": {
+        "anxiety_sensitivity_index_asi3" : {
+            "label": "asi3",
+            "items" : [
+                "asi3_assessed_at",
+                "asi3_1",
+                "asi3_2"
+            ]
+        },
+        "overall_anxiety_severity_and_impairment_scale_oasi": {
+            "label": "oasis",
+            "items": []
+        }
+    }
+}
