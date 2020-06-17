@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+# -*- coding:utf-8 -*-
 
 # Convert RedCap Exports to BIDS format
 import sys
@@ -48,9 +48,6 @@ if __name__ == "__main__":
     for form in config['forms'].keys():
         print 'Exporting %s...' % form
         # print project.export_metadata(forms = form)
-
-        forms = project.forms[:2]
-        subset = project.export_records(forms=forms)
         redcapData = project.export_records(records=config['records'], events= config['events'].keys(), forms=[form])
 
         form_df = pandas.DataFrame(redcapData)  # Change to pandas dataframe
@@ -82,4 +79,28 @@ if __name__ == "__main__":
 
         # Create phenotype dir if it doesn't exists
         if not os.path.exists(phenotype_dir): os.makedirs(phenotype_dir)
-        form_df.to_csv(os.path.join(phenotype_dir, phenotype_label + '.tsv'), sep = '\t', index=False)
+        form_df.to_csv(os.path.join(phenotype_dir, phenotype_label + '.tsv'), sep='\t', index=False)    
+
+        # SideCar
+        print 'Making SideCar'
+        meta_data = project.export_metadata()
+
+        manula_sidecar = {}
+
+        for elm in meta_data:
+            if elm['field_name'] in form_fields:
+                manula_sidecar[elm['field_name']] = {
+                    "Description": elm['field_label'],
+                    "Levels": elm['select_choices_or_calculations']
+                }    
+        # print meta_data
+
+
+
+        # md_df = pandas.DataFrame(meta_data)
+        #sidecar_df = pandas.DataFrame(meta_data)  # Change to pandas dataframe
+
+        # md_df.to_csv(os.path.join(phenotype_dir, phenotype_label + '.csv'), index=False) 
+        with open(os.path.join(phenotype_dir, phenotype_label + '.json'), 'w+') as json_file:
+            json.dump(manula_sidecar, json_file, indent=4, sort_keys=True)
+        #sidecar_df.to_csv(os.path.join(phenotype_dir, phenotype_label + '.json'), sep='\t', index=False)

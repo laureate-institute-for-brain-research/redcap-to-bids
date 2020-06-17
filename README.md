@@ -8,10 +8,11 @@ Use the **config.json** file to set events mapping, subjects, etc..
 
 # Requirements
 `$ pip install PyCap`
+
 `$ pip install pandas`
 
 # How to run
-`python redcaptobids.py https://redcap.example.edu/api/ SomeSuperSecretAPIKeyThatNobodyElseShouldHave`
+`$ python redcaptobids.py https://redcap.example.edu/api/ SomeSuperSecretAPIKeyThatNobodyElseShouldHave`
 
 
 # Output
