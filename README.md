@@ -23,6 +23,6 @@ Thiese phenotypes outputs are based on the instrument_mapping element in the con
 ```
 anxiety_sensitivity_index_asi3 ->
 
-/phenotype/asi3.tsv
-/phenotype/asi3.json
+/phenotype/anxiety_sensitivity_index_asi3.tsv
+/phenotype/anxiety_sensitivity_index_asi3.json
 ```
