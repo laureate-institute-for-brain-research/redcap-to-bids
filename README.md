@@ -18,3 +18,11 @@ Use the **config.json** file to set bids_root, events mapping, subjects, etc..
 # Output
 The script will create tsv phenotypes and json sidecar templates for each.
 Thiese phenotypes outputs are based on the instrument_mapping element in the config.json
+
+
+```
+anxiety_sensitivity_index_asi3 ->
+
+/phenotype/asi3.tsv
+/phenotype/asi3.json
+```

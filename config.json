@@ -10,6 +10,9 @@
         },
         "overall_anxiety_severity_and_impairment_scale_oasi": {
             "label": "oasis"
+        },
+        "inbody_test": {
+            "label": "inbody"
         }
     }
 }
