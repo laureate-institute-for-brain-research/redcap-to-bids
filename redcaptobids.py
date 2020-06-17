@@ -74,7 +74,11 @@ if __name__ == "__main__":
 
         # get final directory
         phenotype_dir = os.path.join(config['bids_root'], 'phenotype')
-        phenotype_label = config['forms'][form]['label']
+        try:
+            phenotype_label = config['forms'][form]['label']
+        except KeyError:
+            # If there isn't a label, use the unieq form id
+            phenotype_label = form
 
 
         # Create phenotype dir if it doesn't exists
