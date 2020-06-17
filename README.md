@@ -6,9 +6,12 @@ This python script will convert redcap export into bids format
 # Configuration file
 Use the **config.json** file to set events mapping, subjects, etc..
 
+# Requirements
+`$ pip install PyCap`
+`$ pip install pandas`
 
 # How to run
-`python recaptobids.py https://redcap.example.edu/api/ SomeSuperSecretAPIKeyThatNobodyElseShouldHave`
+`python redcaptobids.py https://redcap.example.edu/api/ SomeSuperSecretAPIKeyThatNobodyElseShouldHave`
 
 
 # Output
