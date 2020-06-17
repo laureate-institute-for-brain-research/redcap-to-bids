@@ -4,15 +4,5 @@
     "events": {
         "event_1_arm_1" : "ses-t0"
     },
-    "forms": {
-        "anxiety_sensitivity_index_asi3" : {
-            "label": "asi3"
-        },
-        "overall_anxiety_severity_and_impairment_scale_oasi": {
-            "label": "oasis"
-        },
-        "inbody_test": {
-            "label": "inbody"
-        }
-    }
+    "forms": ""
 }

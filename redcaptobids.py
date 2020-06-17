@@ -7,6 +7,8 @@ import json
 import pandas
 import os
 
+import requests
+
 
 def read_config_file():
     """
@@ -39,13 +41,42 @@ if __name__ == "__main__":
         print key,': ',config[key]
     print "==========="
 
-    events = config['events'].keys()
-    print config['forms'].keys()
+    # events = config['events'].keys()
 
     project = redcap.Project(sys.argv[1], sys.argv[2], verify_ssl=False)
+    meta_data = project.export_metadata()
+
+    # records = project.export_users(format='json')
+    # all_froms = records[0]['forms']
+    # for form in all_froms:
+    #     print form
+
+    # Get All Instruments
+    
+    data = {
+        'token': sys.argv[2],
+        'content': 'instrument',
+        'format': 'json',
+        'returnFormat': 'json'
+    }
+    r = requests.post(sys.argv[1], data=data)
+    instrument_map = {}
+    for instrument in r.json():
+        # print instrument
+        instrument_map[instrument['instrument_name']] = instrument['instrument_label']
+
+    forms = instrument_map.keys()
+
+    # If there exists a form's key and it's not blank, then use it
+    if 'forms' in config:
+        try:
+            forms = config['forms'].keys()
+        except AttributeError:
+            print "EXPORT ALL instruments"
 
     
-    for form in config['forms'].keys():
+    
+    for form in forms:
         print 'Exporting %s...' % form
         # print project.export_metadata(forms = form)
         redcapData = project.export_records(records=config['records'], events= config['events'].keys(), forms=[form])
@@ -67,7 +98,15 @@ if __name__ == "__main__":
         # add 'sub' to the id
         for idx, participant_id in enumerate(form_df.participant_id):
             form_df.at[idx, 'participant_id'] = 'sub-' + participant_id.upper()
-            
+        
+        # add 'timepoints' column
+        if len(config['events'].keys()) == 1:
+            ses_label = config['events'][config['events'].keys()[0]]
+            ses_events = [ses_label for x in form_df.participant_id]
+            form_df['session'] = ses_events
+        else:
+            print 'more than 1 event'
+
         # Reaplcea nan with 'n/a'
         form_df.replace(r'^\s*$', 'n/a', regex=True, inplace = True)
 
@@ -76,7 +115,7 @@ if __name__ == "__main__":
         phenotype_dir = os.path.join(config['bids_root'], 'phenotype')
         try:
             phenotype_label = config['forms'][form]['label']
-        except KeyError:
+        except (KeyError,TypeError):
             # If there isn't a label, use the unieq form id
             phenotype_label = form
 
@@ -87,24 +126,44 @@ if __name__ == "__main__":
 
         # SideCar
         print 'Making SideCar'
-        meta_data = project.export_metadata()
 
-        manula_sidecar = {}
+        # print project.export_project_info()
+
+        manual_sidecar = {}
 
         for elm in meta_data:
+            # print elm
             if elm['field_name'] in form_fields:
-                manula_sidecar[elm['field_name']] = {
+                manual_sidecar[elm['field_name']] = {
                     "Description": elm['field_label'],
                     "Levels": elm['select_choices_or_calculations']
                 }    
         # print meta_data
 
-
-
+        # Add Measurement Tool Description'
+        manual_sidecar['MeasurementToolMetadata'] = {}
+        try:
+            measurement_tool_description = config['forms'][form]['Description']
+            manual_sidecar['MeasurementToolMetadata'] = {}
+            manual_sidecar['MeasurementToolMetadata']['Description'] = measurement_tool_description
+        except (KeyError, TypeError):
+            # If there isn't a label, use the unieq form id
+            manual_sidecar['MeasurementToolMetadata']['Description'] = instrument_map[form]
+            pass
+        
+        try:
+            measurement_tool_term_url = config['forms'][form]['TermURL']
+            
+            manual_sidecar['MeasurementToolMetadata']['TermURL'] = measurement_tool_term_url
+        except (KeyError, TypeError):
+            # If there isn't a label, use the unieq form id
+            pass
+           
+        
         # md_df = pandas.DataFrame(meta_data)
         #sidecar_df = pandas.DataFrame(meta_data)  # Change to pandas dataframe
 
         # md_df.to_csv(os.path.join(phenotype_dir, phenotype_label + '.csv'), index=False) 
         with open(os.path.join(phenotype_dir, phenotype_label + '.json'), 'w+') as json_file:
-            json.dump(manula_sidecar, json_file, indent=4, sort_keys=True)
+            json.dump(manual_sidecar, json_file, indent=4, sort_keys=True)
         #sidecar_df.to_csv(os.path.join(phenotype_dir, phenotype_label + '.json'), sep='\t', index=False)
