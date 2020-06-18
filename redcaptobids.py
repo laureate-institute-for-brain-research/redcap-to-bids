@@ -9,6 +9,10 @@ import os
 
 import requests
 
+# disable https InsecureRestsWarning
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
 
 def read_config_file():
     """
@@ -72,7 +76,7 @@ if __name__ == "__main__":
         try:
             forms = config['forms'].keys()
         except AttributeError:
-            print "EXPORT ALL instruments"
+            print "EXPORTING ALL instruments"
 
     
     
@@ -83,11 +87,20 @@ if __name__ == "__main__":
 
         form_df = pandas.DataFrame(redcapData)  # Change to pandas dataframe
         
-        # Remove column
-        form_df.drop(columns=['redcap_event_name'], inplace=True)
+        # Rename the redcap_event_name to mapping
+
+        for event in config['events']:
+            # form_df._replace(event, config['events'][event], inplace=True)
+            form_df['redcap_event_name'] = form_df['redcap_event_name'].str.replace(event, config['events'][event])
+
+
+        # form_df.replace('G', 1, inplace=True)
+        # form_df.drop(columns=['redcap_event_name'], inplace=True)
 
         # Rename column
         form_df.rename({'record_id': 'participant_id'}, axis='columns', inplace=True)
+        form_df.rename({'redcap_event_name': 'session'}, axis='columns', inplace=True)
+        
         
         # Reorder Columns
         form_fields = [ field for field in form_df.columns if field != 'participant_id']
@@ -100,12 +113,12 @@ if __name__ == "__main__":
             form_df.at[idx, 'participant_id'] = 'sub-' + participant_id.upper()
         
         # add 'timepoints' column
-        if len(config['events'].keys()) == 1:
-            ses_label = config['events'][config['events'].keys()[0]]
-            ses_events = [ses_label for x in form_df.participant_id]
-            form_df['session'] = ses_events
-        else:
-            print 'more than 1 event'
+        # if len(config['events'].keys()) == 1:
+        #     ses_label = config['events'][config['events'].keys()[0]]
+        #     ses_events = [ses_label for x in form_df.participant_id]
+        #     form_df['session'] = ses_events
+        # else:
+        #     print 'more than 1 event'
 
         # Reaplcea nan with 'n/a'
         form_df.replace(r'^\s*$', 'n/a', regex=True, inplace = True)
@@ -125,7 +138,7 @@ if __name__ == "__main__":
         form_df.to_csv(os.path.join(phenotype_dir, phenotype_label + '.tsv'), sep='\t', index=False)    
 
         # SideCar
-        print 'Making SideCar'
+        print 'Making SideCar %s'% form
 
         # print project.export_project_info()
 
