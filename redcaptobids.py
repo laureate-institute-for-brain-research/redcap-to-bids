@@ -39,11 +39,12 @@ if __name__ == "__main__":
         sys.exit()
 
     
+    print "============================================"
     print "Reading Config File"
     config = read_config_file()
     for key in config:
         print key,': ',config[key]
-    print "==========="
+    print "============================================"
 
     # events = config['events'].keys()
 
@@ -96,6 +97,11 @@ if __name__ == "__main__":
 
         # form_df.replace('G', 1, inplace=True)
         # form_df.drop(columns=['redcap_event_name'], inplace=True)
+
+        # Delete any completed column names
+        for colname in form_df.columns:
+            if 'complete' in colname:
+                form_df.drop(columns=[colname], inplace=True)
 
         # Rename column
         form_df.rename({'record_id': 'participant_id'}, axis='columns', inplace=True)

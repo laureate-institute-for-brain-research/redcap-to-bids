@@ -1,10 +1,9 @@
 {
-    "bids_root": "/media/cephfs/labs/NPC/COBRE/studies/core",
+    "bids_root": "/media/cephfs/labs/NPC/COBRE/studies/lps",
     "records"  : "",
     "events": {
-        "event_1_arm_1" : "ses-t0"
+        "visit_1_screening_arm_1" : "ses-t0",
+        "visit_2_hours_0_arm_1": "ses-t1"
     },
-    "forms": {
-        "adult_adhd_selfreport_scale_asrs": {}
-    }
+    "forms": ""
 }
