@@ -1,7 +1,7 @@
 certifi==2020.4.5.2
 chardet==3.0.4
 idna==2.9
-numpy==1.16.6
+numpy==1.22.0
 pandas==0.24.2
 PyCap==1.0.2
 python-dateutil==2.8.1
